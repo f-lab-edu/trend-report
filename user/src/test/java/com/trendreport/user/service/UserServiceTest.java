@@ -71,6 +71,6 @@ class UserServiceTest {
         CustomException exception = assertThrows(CustomException.class,
             () -> userService.signUp(form));
         //then
-        assertEquals(ErrorCode.ALREADY_REGISTER_EMAIL.getMessage(), exception.getMessage());
+        assertEquals(ErrorCode.ALREADY_REGISTERED_EMAIL.getMessage(), exception.getMessage());
     }
 }

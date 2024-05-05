@@ -25,7 +25,7 @@ public class User extends BaseEntity{
     private Long id;
     @Column(unique = true)
     private String email;
-    private String password;
+    private String encryptedPassword;
     private String sex;
     private Integer age;
 }

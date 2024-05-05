@@ -2,10 +2,12 @@ package com.trendreport.user.model;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import java.sql.Timestamp;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -13,8 +15,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(value = {AuditingEntityListener.class})
 public class BaseEntity {
 
-    @CreatedDate
-    private LocalDateTime createdAt;
-    @LastModifiedDate
-    private LocalDateTime modifiedAt;
+    private Timestamp createdAt;
+    private Timestamp modifiedAt;
+
+    @PrePersist
+    public void prePersist(){
+        ZonedDateTime kst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.createdAt = Timestamp.valueOf(kst.toLocalDateTime());
+        this.modifiedAt = Timestamp.valueOf(kst.toLocalDateTime());
+    }
+    @PreUpdate
+    public void preUpdate(){
+        ZonedDateTime kst = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.modifiedAt = Timestamp.valueOf(kst.toLocalDateTime());
+    }
 }
