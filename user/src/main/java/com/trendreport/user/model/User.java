@@ -1,7 +1,10 @@
 package com.trendreport.user.model;
 
+import com.trendreport.user.dto.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,4 +31,7 @@ public class User extends BaseEntity{
     private String encryptedPassword;
     private String sex;
     private Integer age;
+    @Enumerated(EnumType.STRING)
+    private Role role;
+    private boolean isDeleted;
 }

@@ -1,5 +1,6 @@
 package com.trendreport.user.controller;
 
+import com.trendreport.user.dto.SignInForm;
 import com.trendreport.user.dto.SignUpForm;
 import com.trendreport.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,11 @@ public class UserController {
 
     @PostMapping("/auth/signup")
     public ResponseEntity<String> createUser(@RequestBody SignUpForm form){
-        return ResponseEntity.ok(userService.signUp(form));
+        return ResponseEntity.ok(userService.signUpUser(form));
+    }
+
+    @PostMapping("/auth/signin")
+    public ResponseEntity<String> logInUser(@RequestBody SignInForm form){
+        return ResponseEntity.ok(userService.authenticate(form));
     }
 }
