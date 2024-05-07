@@ -90,7 +90,7 @@ class UserServiceTest {
             .build();
         given(passwordEncoder.matches(any(),any()))
             .willReturn(true);
-        given(userRepository.findUserByEmail(anyString()))
+        given(userRepository.findByEmail(anyString()))
             .willReturn(Optional.ofNullable(user));
         //when
         String authenticate = userService.authenticate(form);
@@ -99,12 +99,12 @@ class UserServiceTest {
     }
     @DisplayName("로그인 실패 - 가입된 이메일 없음")
     @Test
-    void authenticate_do_not_exist_email() {
+    void authenticate_doNotExistEmail() {
         //given
         SignInForm form = SignInForm.builder()
             .email("111@naver.com")
             .password("1111").build();
-        given(userRepository.findUserByEmail(anyString()))
+        given(userRepository.findByEmail(anyString()))
             .willReturn(Optional.empty());
         //when
         CustomException exception = assertThrows(CustomException.class,
@@ -114,7 +114,7 @@ class UserServiceTest {
     }
     @DisplayName("로그인 실패 - 삭제된 계정")
     @Test
-    void authenticate_deleted_account() {
+    void authenticate_deletedAccount() {
         //given
         SignInForm form = SignInForm.builder()
             .email("111@naver.com")
@@ -124,7 +124,7 @@ class UserServiceTest {
             .encryptedPassword("encryptedPassword")
             .isDeleted(true)
             .build();
-        given(userRepository.findUserByEmail(anyString()))
+        given(userRepository.findByEmail(anyString()))
             .willReturn(Optional.ofNullable(user));
         //when
         CustomException exception = assertThrows(CustomException.class,
@@ -134,7 +134,7 @@ class UserServiceTest {
     }
     @DisplayName("로그인 실패 - 비밀번호가 일치하지 않음")
     @Test
-    void authenticate_mismatch_password() {
+    void authenticate_mismatchPassword() {
         //given
         SignInForm form = SignInForm.builder()
             .email("111@naver.com")
@@ -144,7 +144,7 @@ class UserServiceTest {
             .encryptedPassword("encryptedPassword")
             .isDeleted(false)
             .build();
-        given(userRepository.findUserByEmail(anyString()))
+        given(userRepository.findByEmail(anyString()))
             .willReturn(Optional.ofNullable(user));
         given(passwordEncoder.matches(any(),any()))
             .willReturn(false);

@@ -37,7 +37,7 @@ public class UserService {
     }
 
     public String authenticate(SignInForm form){
-        User user = userRepository.findUserByEmail(form.getEmail())
+        User user = userRepository.findByEmail(form.getEmail())
             .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_EXIST_EMAIL));
         if(user.isDeleted()){
             throw new CustomException(ErrorCode.DELETED_ACCOUNT);
