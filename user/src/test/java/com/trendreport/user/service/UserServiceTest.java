@@ -1,20 +1,20 @@
 package com.trendreport.user.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.trendreport.user.dto.SignInForm;
 import com.trendreport.user.dto.SignUpForm;
+import com.trendreport.user.dto.TokenDto;
 import com.trendreport.user.exception.CustomException;
 import com.trendreport.user.exception.ErrorCode;
 import com.trendreport.user.model.User;
 import com.trendreport.user.repository.UserRepository;
-import java.util.Optional;
+import com.trendreport.user.security.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +22,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +35,12 @@ class UserServiceTest {
     private UserService userService;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private JwtTokenProvider jwtTokenProvider;
+    @Mock
+    private AuthenticationManager authenticationManager;
+    @Mock
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Test
     void signUp() {
@@ -83,75 +91,20 @@ class UserServiceTest {
         SignInForm form = SignInForm.builder()
             .email("111@naver.com")
             .password("1111").build();
-        User user = User.builder()
-            .email("111@naver.com")
-            .encryptedPassword("encryptedPassword")
-            .isDeleted(false)
-            .build();
-        given(passwordEncoder.matches(any(),any()))
-            .willReturn(true);
-        given(userRepository.findByEmail(anyString()))
-            .willReturn(Optional.ofNullable(user));
+        TokenDto tokenDto = TokenDto.builder()
+            .grantType("grant")
+            .refreshToken("refresh")
+            .accessToken("access").build();
+
+        given(authenticationManagerBuilder.getObject())
+            .willReturn(authenticationManager);
+        given(jwtTokenProvider.generateToken(any()))
+            .willReturn(tokenDto);
+
         //when
-        String authenticate = userService.authenticate(form);
+        TokenDto result = userService.authenticate(form);
         //then
-        assertEquals("로그인 성공",authenticate);
-    }
-    @DisplayName("로그인 실패 - 가입된 이메일 없음")
-    @Test
-    void authenticate_doNotExistEmail() {
-        //given
-        SignInForm form = SignInForm.builder()
-            .email("111@naver.com")
-            .password("1111").build();
-        given(userRepository.findByEmail(anyString()))
-            .willReturn(Optional.empty());
-        //when
-        CustomException exception = assertThrows(CustomException.class,
-            () -> userService.authenticate(form));
-        //then
-        assertEquals(ErrorCode.DO_NOT_EXIST_EMAIL.getMessage(),exception.getMessage());
-    }
-    @DisplayName("로그인 실패 - 삭제된 계정")
-    @Test
-    void authenticate_deletedAccount() {
-        //given
-        SignInForm form = SignInForm.builder()
-            .email("111@naver.com")
-            .password("1111").build();
-        User user = User.builder()
-            .email("111@naver.com")
-            .encryptedPassword("encryptedPassword")
-            .isDeleted(true)
-            .build();
-        given(userRepository.findByEmail(anyString()))
-            .willReturn(Optional.ofNullable(user));
-        //when
-        CustomException exception = assertThrows(CustomException.class,
-            () -> userService.authenticate(form));
-        //then
-        assertEquals(ErrorCode.DELETED_ACCOUNT.getMessage(),exception.getMessage());
-    }
-    @DisplayName("로그인 실패 - 비밀번호가 일치하지 않음")
-    @Test
-    void authenticate_mismatchPassword() {
-        //given
-        SignInForm form = SignInForm.builder()
-            .email("111@naver.com")
-            .password("1111").build();
-        User user = User.builder()
-            .email("111@naver.com")
-            .encryptedPassword("encryptedPassword")
-            .isDeleted(false)
-            .build();
-        given(userRepository.findByEmail(anyString()))
-            .willReturn(Optional.ofNullable(user));
-        given(passwordEncoder.matches(any(),any()))
-            .willReturn(false);
-        //when
-        CustomException exception = assertThrows(CustomException.class,
-            () -> userService.authenticate(form));
-        //then
-        assertEquals(ErrorCode.DO_NOT_MATCH_PASSWORD.getMessage(),exception.getMessage());
+        assertEquals("refresh",result.getRefreshToken());
+        assertEquals("access",result.getAccessToken());
     }
 }
