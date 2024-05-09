@@ -4,11 +4,16 @@ import com.trendreport.user.dto.Role;
 import com.trendreport.user.dto.Sex;
 import com.trendreport.user.dto.SignInForm;
 import com.trendreport.user.dto.SignUpForm;
+import com.trendreport.user.dto.TokenDto;
 import com.trendreport.user.exception.CustomException;
 import com.trendreport.user.exception.ErrorCode;
 import com.trendreport.user.model.User;
 import com.trendreport.user.repository.UserRepository;
+import com.trendreport.user.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +23,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public String signUpUser(SignUpForm form){
         if(userRepository.existsByEmail(form.getEmail())){
@@ -36,15 +43,15 @@ public class UserService {
         }
     }
 
-    public String authenticate(SignInForm form){
-        User user = userRepository.findByEmail(form.getEmail())
-            .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_EXIST_EMAIL));
-        if(user.isDeleted()){
-            throw new CustomException(ErrorCode.DELETED_ACCOUNT);
+    public TokenDto authenticate(SignInForm form){
+        UsernamePasswordAuthenticationToken authenticationToken  = new UsernamePasswordAuthenticationToken(
+            form.getEmail(), form.getPassword());
+        try{
+            Authentication authentication = authenticationManagerBuilder.getObject()
+                .authenticate(authenticationToken);
+            return jwtTokenProvider.generateToken(authentication);
+        }catch (RuntimeException e){
+            throw new CustomException(ErrorCode.DO_NOT_MATCH_ACCOUNT_INFO);
         }
-        if(!passwordEncoder.matches(form.getPassword(),user.getEncryptedPassword())){
-            throw new CustomException(ErrorCode.DO_NOT_MATCH_PASSWORD);
-        }
-        return "로그인 성공";
     }
 }

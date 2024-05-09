@@ -2,6 +2,7 @@ package com.trendreport.user.controller;
 
 import com.trendreport.user.dto.SignInForm;
 import com.trendreport.user.dto.SignUpForm;
+import com.trendreport.user.dto.TokenDto;
 import com.trendreport.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class UserController {
     }
 
     @PostMapping("/auth/signin")
-    public ResponseEntity<String> signIn(@RequestBody SignInForm form){
+    public ResponseEntity<TokenDto> signIn(@RequestBody SignInForm form){
         return ResponseEntity.ok(userService.authenticate(form));
     }
 }
