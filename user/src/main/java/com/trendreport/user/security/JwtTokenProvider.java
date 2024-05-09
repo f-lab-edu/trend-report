@@ -28,8 +28,8 @@ public class JwtTokenProvider {
     @Value("${spring.jwt.secret}")
     private String SECRETE_KEY;
     private static final String KEY_ROLE = "role";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000*60*60;
-    private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000*60*60*24;
+    private static final long ACCESS_TOKEN_DURATION_IN_SECOND = 1000*60*60;
+    private static final long REFRESH_TOKEN_DURATION_IN_SECOND = 1000*60*60*24;
     private final UserDetailsServiceImpl userDetailsService;
 
     private SecretKey getSigningKey() {
@@ -44,18 +44,18 @@ public class JwtTokenProvider {
         claims.put(KEY_ROLE, role);
 
         long now = (new Date()).getTime();
-        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        Date accessTokenExpiresAt = new Date(now + ACCESS_TOKEN_DURATION_IN_SECOND);
         String accessToken = Jwts.builder()
             .setClaims(claims)
             .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(accessTokenExpiresIn)
+            .setExpiration(accessTokenExpiresAt)
             .signWith(this.getSigningKey())
             .compact();
 
         String refreshToken = Jwts.builder()
             .setClaims(claims)
             .setIssuedAt(Date.from(Instant.now()))
-            .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+            .setExpiration(new Date(now + REFRESH_TOKEN_DURATION_IN_SECOND))
             .signWith(this.getSigningKey())
             .compact();
 
