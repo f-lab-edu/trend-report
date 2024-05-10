@@ -1,13 +1,13 @@
 package com.trendreport.user.model;
 
-import com.trendreport.user.dto.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,18 +20,15 @@ import org.hibernate.envers.AuditOverride;
 @NoArgsConstructor
 @AllArgsConstructor
 @AuditOverride(forClass = BaseEntity.class)
-public class User extends BaseEntity{
-
+public class Interest extends BaseEntity{
     @Id
-    @Column(name = "USER_ID", nullable = false)
+    @Column(name = "INTEREST_ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
-    private String email;
-    private String encryptedPassword;
-    private String sex;
-    private Integer age;
-    @Enumerated(EnumType.STRING)
-    private Role role;
-    private boolean isDeleted;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "TOPIC_ID")
+    private Topic topic;
 }

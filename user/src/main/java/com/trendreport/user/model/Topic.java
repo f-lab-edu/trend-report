@@ -1,10 +1,7 @@
 package com.trendreport.user.model;
 
-import com.trendreport.user.dto.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,18 +17,22 @@ import org.hibernate.envers.AuditOverride;
 @NoArgsConstructor
 @AllArgsConstructor
 @AuditOverride(forClass = BaseEntity.class)
-public class User extends BaseEntity{
-
+public class Topic extends BaseEntity{
     @Id
-    @Column(name = "USER_ID", nullable = false)
+    @Column(name = "INTEREST_ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
-    private String email;
-    private String encryptedPassword;
-    private String sex;
-    private Integer age;
-    @Enumerated(EnumType.STRING)
-    private Role role;
-    private boolean isDeleted;
+    private String topic;
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o){
+            return true;
+        }
+        if(o == null || getClass() != o.getClass()){
+            return false;
+        }
+        Topic that = (Topic) o;
+        return topic.equals(that.topic);
+    }
 }

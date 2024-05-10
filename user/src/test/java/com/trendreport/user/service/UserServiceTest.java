@@ -98,7 +98,7 @@ class UserServiceTest {
 
         given(authenticationManagerBuilder.getObject())
             .willReturn(authenticationManager);
-        given(jwtTokenProvider.generateToken(any()))
+        given(jwtTokenProvider.generateToken(any(), any()))
             .willReturn(tokenDto);
 
         //when

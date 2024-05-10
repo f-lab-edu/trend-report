@@ -36,8 +36,7 @@ public class JwtTokenProvider {
         byte[] keyBytes = Decoders.BASE64.decode(this.SECRETE_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-    public TokenDto generateToken(Authentication authentication) {
-        String email = authentication.getName();
+    public TokenDto generateToken(String email, Authentication authentication) {
         String role = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
             .toString();
         Claims claims = Jwts.claims().setSubject(email);
@@ -69,7 +68,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String accessToken) {
         String subject = parseClaims(accessToken).getSubject();
         UserDetails username = userDetailsService.loadUserByUsername(subject);
-        return new UsernamePasswordAuthenticationToken(username, "", username.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(username, accessToken, username.getAuthorities());
     }
 
     public boolean validateToken(String token) {
