@@ -9,4 +9,14 @@ import lombok.Getter;
 @Getter
 public class InterestDto {
     private String topic;
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o)
+            return true;
+        if(o == null || getClass() != o.getClass())
+            return false;
+        InterestDto that = (InterestDto) o;
+        return topic.equals(that.topic);
+    }
 }
