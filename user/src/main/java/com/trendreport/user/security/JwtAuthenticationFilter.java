@@ -8,12 +8,18 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends GenericFilter {
+
+    public static final String TOKEN_HEADER = "Authorization";
+    public static final String TOKEN_PREFIX = "Bearer ";
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -22,7 +28,7 @@ public class JwtAuthenticationFilter extends GenericFilter {
         throws IOException, ServletException {
         String token = resolveToken((HttpServletRequest) request);
 
-        if(token != null && jwtTokenProvider.validateToken(token)){
+        if(StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)){
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
@@ -30,10 +36,11 @@ public class JwtAuthenticationFilter extends GenericFilter {
     }
 
     private String resolveToken(HttpServletRequest request){
-        String bearerToken = request.getHeader("Authorization");
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
-            return bearerToken.substring(7);
+        String token = request.getHeader(TOKEN_HEADER);
+
+        if((ObjectUtils.isEmpty(token) || token.startsWith(TOKEN_PREFIX)) && token != null){
+            return token.substring(TOKEN_PREFIX.length());
         }
-        return null;
+        return "";
     }
 }

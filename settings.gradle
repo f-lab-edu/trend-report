@@ -1,3 +1,4 @@
 rootProject.name = 'trend-report'
 include 'user'
+include 'external'
 
