@@ -23,7 +23,7 @@ import org.hibernate.envers.AuditOverride;
 public class User extends BaseEntity{
 
     @Id
-    @Column(name = "USER_ID", nullable = false)
+    @Column(name = "id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
