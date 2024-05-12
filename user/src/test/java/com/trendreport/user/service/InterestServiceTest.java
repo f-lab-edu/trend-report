@@ -40,20 +40,21 @@ class InterestServiceTest {
     private InterestService interestService;
 
     private Topic topic = Topic.builder()
-        .topic("topic").build();
+        .name("topic").build();
     private User user = User.builder()
         .id(1L).build();
     private List<Interest> interestList = new ArrayList<>();
     private Interest interest = Interest.builder()
+        .id(1L)
         .user(user)
         .topic(topic).build();
 
     @Test
     void addInterest() {
         //given
-        given(topicRepository.existsByTopic(any()))
+        given(topicRepository.existsByName(any()))
             .willReturn(true);
-        given(topicRepository.findByTopic(any()))
+        given(topicRepository.findByName(any()))
             .willReturn(Optional.ofNullable(topic));
         given(userRepository.findById(any()))
             .willReturn(Optional.ofNullable(user));
@@ -66,7 +67,7 @@ class InterestServiceTest {
         verify(interestRepository, times(1))
             .save(captor.capture());
         Interest captorValue = captor.getValue();
-        assertEquals("topic",captorValue.getTopic().getTopic());
+        assertEquals("topic",captorValue.getTopic().getName());
         assertEquals(1L,captorValue.getUser().getId());
     }
     @DisplayName("관심사 추가 실패 - 관심사 항목 최대")
@@ -77,9 +78,9 @@ class InterestServiceTest {
         interestList.add(interest);
         interestList.add(interest);
         interestList.add(interest);
-        given(topicRepository.existsByTopic(any()))
+        given(topicRepository.existsByName(any()))
             .willReturn(true);
-        given(topicRepository.findByTopic(any()))
+        given(topicRepository.findByName(any()))
             .willReturn(Optional.ofNullable(topic));
         given(userRepository.findById(any()))
             .willReturn(Optional.ofNullable(user));
@@ -96,9 +97,9 @@ class InterestServiceTest {
     void addInterest_alreadyAdd() {
         //given
         interestList.add(interest);
-        given(topicRepository.existsByTopic(any()))
+        given(topicRepository.existsByName(any()))
             .willReturn(true);
-        given(topicRepository.findByTopic(any()))
+        given(topicRepository.findByName(any()))
             .willReturn(Optional.ofNullable(topic));
         given(userRepository.findById(any()))
             .willReturn(Optional.ofNullable(user));
@@ -123,20 +124,16 @@ class InterestServiceTest {
         List<InterestDto> dtoList = interestService.getInterest(1L);
         //then
         assertThat(dtoList).hasSize(1);
-        assertThat(dtoList).first().isEqualTo(InterestDto.builder().topic(topic.getTopic()).build());
+        assertThat(dtoList).first().isEqualTo(InterestDto.builder().topic(topic.getName()).build());
     }
 
     @Test
     void deleteInterest() {
         //given
-        given(userRepository.findById(any()))
-            .willReturn(Optional.ofNullable(user));
-        given(topicRepository.findByTopic(any()))
-            .willReturn(Optional.ofNullable(topic));
-        given(interestRepository.findByUserAndTopic(any(),any()))
+        given(interestRepository.findByUser_IdAndTopic_Id(any(),any()))
             .willReturn(Optional.ofNullable(interest));
         //when
-        interestService.deleteInterest(1L,"topic");
+        interestService.deleteInterest(1L,1L);
         //then
         verify(interestRepository, times(1)).delete(any(Interest.class));
     }

@@ -26,7 +26,7 @@ public class InterestController {
     private final InterestService interestService;
 
     @PutMapping()
-    public ResponseEntity<String> addInterest(@AuthenticationPrincipal SecurityUser user
+    public ResponseEntity<Boolean> addInterest(@AuthenticationPrincipal SecurityUser user
         , @RequestParam("topic") String topic){
         return ResponseEntity.ok(interestService.addInterest(user.getUser().getId(), topic));
     }
@@ -35,8 +35,8 @@ public class InterestController {
         return ResponseEntity.ok(interestService.getInterest(user.getUser().getId()));
     }
     @DeleteMapping()
-    public ResponseEntity<String> deleteInterest(@AuthenticationPrincipal SecurityUser user
-        , @RequestParam("topic") String topic){
+    public ResponseEntity<Boolean> deleteInterest(@AuthenticationPrincipal SecurityUser user
+        , @RequestParam("topic") Long topic){
         return ResponseEntity.ok(interestService.deleteInterest(user.getUser().getId(), topic));
     }
 

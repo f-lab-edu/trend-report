@@ -14,9 +14,9 @@ public class TopicService {
 
     @Transactional
     public void createTopic(String topic){
-        Topic interest = Topic.builder()
-            .topic(topic).build();
-        topicRepository.save(interest);
+        Topic buildTopic = Topic.builder()
+            .name(topic).build();
+        topicRepository.save(buildTopic);
     }
 
 }

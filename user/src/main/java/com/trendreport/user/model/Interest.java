@@ -25,9 +25,11 @@ public class Interest extends BaseEntity{
     @Column(name = "INTEREST_ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_ID")
     private User user;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TOPIC_ID")
     private Topic topic;

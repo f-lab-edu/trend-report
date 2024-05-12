@@ -25,45 +25,52 @@ public class InterestService {
     private final InterestRepository interestRepository;
 
     @Transactional
-    public String addInterest(Long userId, String title){
-        if(!topicRepository.existsByTopic(title)){
+    public boolean addInterest(Long userId, String title){
+        if(!topicRepository.existsByName(title)){
             topicService.createTopic(title);
         }
-        Topic topic = topicRepository.findByTopic(title)
+
+        Topic topic = topicRepository.findByName(title)
             .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_MATCH_TOPIC));
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_EXIST_USER));
         List<Interest> interestList = interestRepository.findByUser(user);
+
         if(interestList.size() > 3){
             throw new CustomException(ErrorCode.ALREADY_FULL_INTEREST);
         }
+
         for(Interest i : interestList){
             if(i.getTopic() == topic){
                 throw  new CustomException(ErrorCode.EXIST_INTEREST);
             }
         }
+
         Interest interest = Interest.builder()
             .user(user)
             .topic(topic).build();
+
         interestRepository.save(interest);
-        return "관심사가 추가되었습니다.";
+        return true;
     }
     public List<InterestDto> getInterest(Long userId){
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_EXIST_USER));
+
         return interestRepository.findByUser(user).stream()
-            .map(i -> InterestDto.builder().topic(i.getTopic().getTopic()).build())
+            .map(i -> InterestDto.builder()
+                .id(i.getId())
+                .topic(i.getTopic().getName())
+                .build())
             .collect(Collectors.toList());
     }
     @Transactional
-    public String deleteInterest(Long userId, String title){
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_EXIST_USER));
-        Topic topic = topicRepository.findByTopic(title)
-            .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_EXIST_TOPIC));
-        Interest interest = interestRepository.findByUserAndTopic(user, topic)
+    public boolean deleteInterest(Long userId, Long topicId){
+
+        Interest interest = interestRepository.findByUser_IdAndTopic_Id(userId, topicId)
             .orElseThrow(() -> new CustomException(ErrorCode.DO_NOT_EXIST_INTEREST));
+
         interestRepository.delete(interest);
-        return "관심사가 삭제되었습니다.";
+        return true;
     }
 }

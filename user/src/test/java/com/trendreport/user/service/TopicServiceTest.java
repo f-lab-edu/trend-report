@@ -31,6 +31,6 @@ class TopicServiceTest {
         verify(topicRepository, times(1))
             .save(captor.capture());
         Topic topic = captor.getValue();
-        assertEquals("topic",topic.getTopic());
+        assertEquals("topic",topic.getName());
     }
 }

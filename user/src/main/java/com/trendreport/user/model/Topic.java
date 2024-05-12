@@ -22,7 +22,7 @@ public class Topic extends BaseEntity{
     @Column(name = "INTEREST_ID", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String topic;
+    private String name;
 
     @Override
     public boolean equals(Object o){
@@ -33,6 +33,6 @@ public class Topic extends BaseEntity{
             return false;
         }
         Topic that = (Topic) o;
-        return topic.equals(that.topic);
+        return name.equals(that.name);
     }
 }
