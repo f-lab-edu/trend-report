@@ -1,0 +1,7 @@
+server:
+  port: 8081
+spring:
+  jwt:
+    secret: cc40a3791cf94e649344be45eb1292a2546sdf884d56sf63qwe8mfb
+  profiles:
+    include: secret

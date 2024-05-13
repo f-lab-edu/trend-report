@@ -40,3 +40,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+### application ###
+/src/main/resources/application-secret.yml
