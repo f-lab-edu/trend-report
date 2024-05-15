@@ -1,5 +1,6 @@
 package com.trendreport.external.dto;
 
+import java.time.LocalDate;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrendResponse {
-    private String startDate;
-    private String endDate;
-    private String timeUnit;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private TimeUnit timeUnit;
     private List<TrendResponseResult> results;
 }

@@ -2,6 +2,7 @@ package com.trendreport.external.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.trendreport.external.dto.TimeUnit;
 import com.trendreport.external.dto.TrendDto;
 import com.trendreport.external.dto.TrendReportForm;
 import java.time.LocalDateTime;
@@ -23,7 +24,7 @@ class TrendServiceTest {
     void createTrendDto_date() {
         //given
         TrendReportForm form = TrendReportForm.builder()
-            .timeUnit("date")
+            .timeUnit(TimeUnit.date)
             .keywordGroups(new ArrayList<>())
             .build();
         String startDate = LocalDateTime.now().minusDays(7)
@@ -39,7 +40,7 @@ class TrendServiceTest {
     void createTrendDto_week() {
         //given
         TrendReportForm form = TrendReportForm.builder()
-            .timeUnit("week")
+            .timeUnit(TimeUnit.week)
             .keywordGroups(new ArrayList<>())
             .build();
         String startDate = LocalDateTime.now().minusWeeks(4)
@@ -55,7 +56,7 @@ class TrendServiceTest {
     void createTrendDto_month() {
         //given
         TrendReportForm form = TrendReportForm.builder()
-            .timeUnit("month")
+            .timeUnit(TimeUnit.month)
             .keywordGroups(new ArrayList<>())
             .build();
         String startDate = LocalDateTime.now().minusMonths(12)

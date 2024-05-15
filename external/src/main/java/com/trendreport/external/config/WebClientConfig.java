@@ -12,9 +12,9 @@ import org.springframework.web.reactive.function.client.WebClient;
 @RequiredArgsConstructor
 public class WebClientConfig {
 
-    private final String BASE_URL = "https://openapi.naver.com/v1/datalab";
     @Value("${naver.client-id}")
     private String CLIENT_ID;
+
     @Value("${naver.client-secret}")
     private String CLIENT_SECRET;
 
@@ -28,7 +28,6 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient(){
         return WebClient.builder()
-            .baseUrl((BASE_URL))
             .defaultHeaders(httpHeaders -> {
                 httpHeaders.add("X-Naver-Client-Id", CLIENT_ID);
                 httpHeaders.add("X-Naver-Client-Secret", CLIENT_SECRET);
