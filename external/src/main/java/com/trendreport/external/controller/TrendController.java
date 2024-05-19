@@ -23,7 +23,7 @@ public class TrendController {
 
     @PostMapping()
     public ResponseEntity<?> getTrendReport(@RequestBody TrendReportForm form){
-        TrendResponse response = trendService.getSearchTrend(trendService.createTrendDto(form));
+        final TrendResponse response = trendService.getSearchTrend(trendService.createTrendDto(form));
         return ResponseEntity.ok(reportService.getReport(response));
     }
 }

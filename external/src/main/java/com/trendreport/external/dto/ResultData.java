@@ -9,5 +9,5 @@ import lombok.ToString;
 @ToString
 public class ResultData {
     private String period;
-    private String ratio;
+    private Double ratio;
 }

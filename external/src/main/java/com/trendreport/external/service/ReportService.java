@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 public class ReportService {
 
     private final AiClient aiClient;
-    private final String QUESTION = "트렌드 보고서를 작성해줘";
+    private final String PROMPT = "다음 내용에 대해서 트렌드 보고서를 작성해줘\n";
 
     public String getReport(TrendResponse response){
-        return aiClient.generate(response.toString()+QUESTION);
+        return aiClient.generate(PROMPT+response.toString());
     }
 }
