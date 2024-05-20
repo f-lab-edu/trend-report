@@ -1,0 +1,21 @@
+version: '1'
+
+services:
+  user:
+    image: user:1.0.0
+    container_name: user
+    ports:
+      - "8080:8080"
+    networks:
+      - trend-report
+  external:
+    image: external:1.0.0
+    container_name: external
+    ports:
+      - "8081:8081"
+    networks:
+      - trend-report
+
+networks:
+  trend-report:
+    driver: bridge
