@@ -1,6 +1,8 @@
 package com.trendreport.external.controller;
 
 import com.trendreport.external.dto.TrendReportForm;
+import com.trendreport.external.dto.TrendResponse;
+import com.trendreport.external.service.ReportService;
 import com.trendreport.external.service.TrendService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class TrendController {
 
     private final TrendService trendService;
+    private final ReportService reportService;
 
     @PostMapping()
     public ResponseEntity<?> getTrendReport(@RequestBody TrendReportForm form){
-        return ResponseEntity.ok(trendService.getSearchTrend(trendService.createTrendDto(form)));
+        final TrendResponse response = trendService.getSearchTrend(trendService.createTrendDto(form));
+        return ResponseEntity.ok(reportService.getReport(response));
     }
 }
