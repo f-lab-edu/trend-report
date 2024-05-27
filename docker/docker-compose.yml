@@ -1,13 +1,30 @@
 version: '1'
 
 services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_db
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: 12
+        MYSQL_DATABASE: trend_report
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - trend-report
+
   user:
     image: user:1.0.0
+    depends_on:
+      - mysql
     container_name: user
     ports:
       - "8080:8080"
     networks:
       - trend-report
+
   external:
     image: external:1.0.0
     container_name: external
@@ -19,3 +36,6 @@ services:
 networks:
   trend-report:
     driver: bridge
+
+volumes:
+  mysql_data:
